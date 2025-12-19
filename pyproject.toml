@@ -1,0 +1,48 @@
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mdconv"
+version = "0.1.0"
+description = "A lightweight, modular markdown converter wrapping pandoc"
+readme = "README.md"
+requires-python = ">=3.7"
+license = {text = "MIT"}
+dependencies = [
+    "pypandoc-binary>=1.11",
+]
+[project.optional-dependencies]
+pdf = [
+    "xhtml2pdf>=0.2.11",
+]
+all = [
+    "xhtml2pdf>=0.2.11",
+]
+authors = [
+    {name = "Your Name", email = "your.email@example.com"}
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Text Processing :: Markup",
+    "Topic :: Utilities",
+]
+
+[project.scripts]
+mdconv = "mdconv.cli.main:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["mdconv*"]
+
+[tool.setuptools.package-data]
+mdconv = ["py.typed"]
+

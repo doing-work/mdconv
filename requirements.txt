@@ -1,0 +1,84 @@
+# mdconv requirements
+#
+# Runtime Dependencies
+# ---------------------
+# pypandoc-binary includes the pandoc binary, allowing installation via pip.
+# This eliminates the need to install pandoc separately.
+# Alternative: Install pandoc manually from https://pandoc.org/installing.html
+#              and remove pypandoc-binary from this file.
+pypandoc-binary>=1.11
+
+# PDF Engine Dependencies (optional - for PDF conversion)
+# -------------------------------------------------------
+# Note: PDF conversion requires a PDF engine. Multiple options available:
+#
+# Option 1: xhtml2pdf (RECOMMENDED - Pure Python, FOSS, No System Dependencies!)
+#   - Pure Python PDF engine, installs via pip
+#   - Works on Windows, Linux, macOS - NO system dependencies required
+#   - FOSS (Free and Open Source Software)
+#   - Usage: mdconv input.md -f pdf -o output.pdf --pdf-engine=xhtml2pdf
+#   - This is the best option for zero-dependency PDF generation
+xhtml2pdf>=0.2.11
+
+# Option 1b: weasyprint (Linux/macOS only, Windows requires GTK+)
+#   - Pure Python PDF engine, installs via pip
+#   - Linux/macOS: Works out of the box (no external dependencies)
+#   - Windows: Requires GTK+ libraries (libgobject-2.0-0, etc.)
+#     Installation options for Windows:
+#     a) Use WSL (Windows Subsystem for Linux) - recommended
+#     b) Install GTK+ runtime: https://github.com/tschoonj/GTK-for-Windows-Runtime-Environment-Installer
+#     c) Use xhtml2pdf instead (recommended for Windows)
+#   - Usage: mdconv input.md -f pdf -o output.pdf --pdf-engine=weasyprint
+#weasyprint>=60.0
+
+# Option 2: LaTeX engines (pdflatex, xelatex, lualatex) - DEFAULT & RECOMMENDED FOR WINDOWS
+#   - Requires system installation of LaTeX distribution
+#   - Windows: Install MiKTeX (https://miktex.org/) - easiest option, or TeX Live (https://www.tug.org/texlive/)
+#     MiKTeX installer: https://miktex.org/download
+#   - Linux: sudo apt-get install texlive-latex-base texlive-xetex texlive-luatex
+#   - macOS: brew install --cask mactex or brew install basictex
+#   - Usage: mdconv input.md -f pdf -o output.pdf --pdf-engine=pdflatex
+#   - No Python package needed, pandoc will use system installation
+#   - Best option for Windows users (no GTK+ dependencies)
+
+# Option 3: wkhtmltopdf (GOOD ALTERNATIVE FOR WINDOWS)
+#   - Requires system installation of wkhtmltopdf binary
+#   - Windows: Download installer from https://wkhtmltopdf.org/downloads.html
+#     Direct link: https://github.com/wkhtmltopdf/packaging/releases
+#     Install and add to PATH
+#   - Linux: sudo apt-get install wkhtmltopdf
+#   - macOS: brew install wkhtmltopdf
+#   - Usage: mdconv input.md -f pdf -o output.pdf --pdf-engine=wkhtmltopdf
+#   - Python wrapper available (optional): pdfkit>=1.0.0
+#   - Works well on Windows without additional dependencies
+
+# Option 4: Prince XML (commercial)
+#   - Requires commercial license and system installation
+#   - See https://www.princexml.com/
+#   - Usage: mdconv input.md -f pdf -o output.pdf --pdf-engine=prince
+
+# Option 5: ConTeXt
+#   - Requires system installation
+#   - See https://wiki.contextgarden.net/Installation
+#   - Usage: mdconv input.md -f pdf -o output.pdf --pdf-engine=context
+
+# Option 6: pdfroff (part of groff)
+#   - Usually pre-installed on Unix systems
+#   - Linux: sudo apt-get install groff
+#   - Usage: mdconv input.md -f pdf -o output.pdf --pdf-engine=pdfroff
+
+# Development Dependencies (optional)
+# -----------------------------------
+# Uncomment and install these for development:
+# pytest>=7.0.0
+# pytest-cov>=4.0.0
+# black>=23.0.0
+# flake8>=6.0.0
+# mypy>=1.0.0
+#
+# Web API Dependencies (for api_server.py)
+# -----------------------------------------
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+
+# Add any future runtime dependencies below this line:
