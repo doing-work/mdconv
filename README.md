@@ -1,5 +1,3 @@
-Here’s a cleaner, more consistent **Markdown rewrite** with improved structure, headings, spacing, and code-block clarity. Content is unchanged; only formatting and organization are improved.
-
 ---
 
 # mdconv
