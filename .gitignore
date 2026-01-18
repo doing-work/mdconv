@@ -139,5 +139,17 @@ Thumbs.db
 *.docx
 *.tex
 *.epub
+*.pptx
 test_output/
+output/
+
+# Build environments
+.venv-build/
+venv-build/
+env-build/
+
+# Docker (optional - uncomment if you don't want to commit these)
+# Dockerfile
+# docker-compose.yml
+# .dockerignore
 

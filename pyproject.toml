@@ -22,6 +22,8 @@ all = [
 authors = [
     {name = "Your Name", email = "your.email@example.com"}
 ]
+# Note: If uv has issues with this format, we can skip the editable install
+# and just ensure the package is in the Python path
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",

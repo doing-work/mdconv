@@ -80,5 +80,6 @@ xhtml2pdf>=0.2.11
 # -----------------------------------------
 fastapi>=0.104.0
 uvicorn[standard]>=0.24.0
-
-# Add any future runtime dependencies below this line:
+slowapi>=0.1.9
+python-multipart>=0.0.6  # Required for FastAPI form parsing (multipart/form-data)
+mangum>=0.17.0  # ASGI adapter for AWS Lambda

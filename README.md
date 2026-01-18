@@ -319,12 +319,12 @@ mdconv provides clear, typed exceptions:
 
 mdconv integrates easily with web apps (React, Vue, etc.) using a REST API.
 
-### Quick Start
+### Local Development
 
 1. **Install API dependencies**
 
    ```bash
-   pip install fastapi uvicorn
+   pip install -r requirements.txt
    ```
 
 2. **Start the API server**
@@ -349,7 +349,7 @@ mdconv integrates easily with web apps (React, Vue, etc.) using a REST API.
    const blob = await response.blob();
    ```
 
-See `API_README.md` for full documentation and `examples/react/` for integration examples.
+See `examples/react/` for integration examples.
 
 ---
 

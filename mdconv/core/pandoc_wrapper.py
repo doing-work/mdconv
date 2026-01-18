@@ -134,7 +134,19 @@ class PandocWrapper:
                 cmd.append(f"--{key}={value}")
 
         # Handle input
-        input_is_file = Path(input_data).exists() if isinstance(input_data, str) else False
+        # Check if input_data is a file path (not content)
+        # Only treat as file if it's a short string (likely a path) and the file exists
+        input_is_file = False
+        if isinstance(input_data, str):
+            # Only check if it looks like a path (short, no newlines, exists)
+            # Long strings or strings with newlines are content, not file paths
+            if len(input_data) < 260 and '\n' not in input_data:
+                try:
+                    input_is_file = Path(input_data).exists()
+                except (OSError, ValueError):
+                    # If path is invalid or too long, treat as content
+                    input_is_file = False
+        
         if input_is_file:
             cmd.append(input_data)
             stdin_data = None
@@ -143,10 +155,14 @@ class PandocWrapper:
             stdin_data = input_data.encode("utf-8") if isinstance(input_data, str) else input_data
 
         # Handle output
+        # Some formats (docx, epub, pptx) require -o - to write to stdout
+        formats_requiring_stdout_flag = {"docx", "epub", "pptx"}
         if output_file:
             cmd.extend(["-o", str(output_file)])
             stdout_target = subprocess.DEVNULL
         else:
+            if output_format in formats_requiring_stdout_flag:
+                cmd.extend(["-o", "-"])  # Force stdout output
             stdout_target = subprocess.PIPE
 
         try:
@@ -160,6 +176,13 @@ class PandocWrapper:
             return result.stdout if result.stdout else b""
         except subprocess.CalledProcessError as e:
             error_msg = e.stderr.decode("utf-8") if e.stderr else "Unknown pandoc error"
+            # Check if the error is about file name too long - this might be from the OS, not pandoc
+            if "File name too long" in error_msg or "[Errno 36]" in error_msg:
+                # This error might be from Python/OS, not pandoc stderr
+                # Try to get more context
+                import traceback
+                full_error = f"Pandoc command: {' '.join(cmd)}\nPandoc stderr: {error_msg}\nPython error: {str(e)}"
+                raise ConversionError(f"Pandoc conversion failed: {error_msg}", full_error)
             raise ConversionError(f"Pandoc conversion failed: {error_msg}", error_msg)
         except FileNotFoundError:
             raise PandocNotFoundError()

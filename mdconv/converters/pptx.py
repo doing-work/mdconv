@@ -1,6 +1,7 @@
 """PPTX converter."""
 
 import re
+import tempfile
 from pathlib import Path
 from typing import Optional
 
@@ -55,11 +56,24 @@ class PPTXConverter(BaseConverter):
                 pass
 
         # Get content for processing
-        is_file = Path(input_data).exists() if isinstance(input_data, str) else False
+        # Only treat as file if it's a short string (likely a path) and the file exists
+        is_file = False
+        if isinstance(input_data, str):
+            # Only check if it looks like a path (short, no newlines, exists)
+            # Long strings or strings with newlines are content, not file paths
+            if len(input_data) < 260 and '\n' not in input_data:
+                try:
+                    is_file = Path(input_data).exists()
+                except (OSError, ValueError):
+                    # If path is invalid or too long, treat as content
+                    is_file = False
+        
         if is_file:
             content = Path(input_data).read_text(encoding="utf-8")
+            input_file_path = input_data
         else:
             content = input_data
+            input_file_path = None
 
         # Auto-detect slide level if not explicitly set
         slide_level = options.get("slide_level")
@@ -87,13 +101,30 @@ class PPTXConverter(BaseConverter):
             pandoc_options["toc"] = True
             pandoc_options["toc-depth"] = options.get("toc_depth", 3)
 
-        return self.pandoc_wrapper.convert(
-            input_data=input_with_metadata,
-            input_format="markdown",
-            output_format="pptx",
-            output_file=output_file,
-            options=pandoc_options,
-        )
+        # For PPTX, pandoc has issues with stdin input when processing markdown content
+        # Always use a temporary file to avoid "File name too long" errors
+        # Create a temporary file with the markdown content
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.md', delete=False, encoding='utf-8') as tmp_file:
+            tmp_file.write(input_with_metadata)
+            tmp_file_path = tmp_file.name
+        
+        try:
+            # Use the temporary file as input
+            result = self.pandoc_wrapper.convert(
+                input_data=tmp_file_path,
+                input_format="markdown",
+                output_format="pptx",
+                output_file=output_file,
+                options=pandoc_options,
+            )
+        finally:
+            # Clean up temporary file
+            try:
+                Path(tmp_file_path).unlink()
+            except OSError:
+                pass  # Ignore cleanup errors
+        
+        return result
 
     def _detect_slide_level(self, content: str) -> int:
         """
